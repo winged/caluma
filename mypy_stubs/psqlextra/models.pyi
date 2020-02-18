@@ -1,0 +1,9 @@
+from .manager import PostgresManager as PostgresManager
+from django.db import models
+from typing import Any
+
+class PostgresModel(models.Model):
+    class Meta:
+        abstract: bool = ...
+        base_manager_name: str = ...
+    objects: Any = ...

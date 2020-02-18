@@ -1,0 +1,6 @@
+from rest_framework.compat import URLResolver as URLResolver, get_regex_pattern as get_regex_pattern, is_route_pattern as is_route_pattern, path as path, register_converter as register_converter
+from rest_framework.settings import api_settings as api_settings
+from typing import Any, Optional
+
+def apply_suffix_patterns(urlpatterns: Any, suffix_pattern: Any, suffix_required: Any, suffix_route: Optional[Any] = ...): ...
+def format_suffix_patterns(urlpatterns: Any, suffix_required: bool = ..., allowed: Optional[Any] = ...): ...

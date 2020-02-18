@@ -1,0 +1,6 @@
+from typing import Any
+
+class SnapshotError(Exception): ...
+
+class SnapshotNotFound(SnapshotError):
+    def __init__(self, module: Any, test_name: Any) -> None: ...

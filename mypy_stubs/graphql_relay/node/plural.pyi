@@ -1,0 +1,3 @@
+from typing import Any, Optional
+
+def plural_identifying_root_field(arg_name: Any, input_type: Any, output_type: Any, resolve_single_input: Any, description: Optional[Any] = ...): ...

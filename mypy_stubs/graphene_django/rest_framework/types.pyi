@@ -1,0 +1,6 @@
+from graphene.types.unmountedtype import UnmountedType
+from typing import Any
+
+class DictType(UnmountedType):
+    key: Any = ...
+    value: Any = ...

@@ -1,0 +1,6 @@
+from django.apps import AppConfig
+from typing import Any
+
+class AuthTokenConfig(AppConfig):
+    name: str = ...
+    verbose_name: Any = ...
