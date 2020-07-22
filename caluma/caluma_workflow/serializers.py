@@ -25,7 +25,7 @@ class GroupJexlField(serializers.JexlField):
 class SaveWorkflowSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Workflow
-        fields = (
+        fields = [
             "slug",
             "name",
             "description",
@@ -35,7 +35,7 @@ class SaveWorkflowSerializer(serializers.ModelSerializer):
             "allow_forms",
             "is_archived",
             "is_published",
-        )
+        ]
 
 
 class AddWorkflowFlowSerializer(serializers.ModelSerializer):
@@ -86,7 +86,7 @@ class AddWorkflowFlowSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        fields = ("workflow", "tasks", "next")
+        fields = ["workflow", "tasks", "next"]
         model = models.Workflow
 
 
@@ -98,7 +98,7 @@ class RemoveFlowSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        fields = ("flow",)
+        fields = ["flow"]
         model = models.Flow
 
 
@@ -117,7 +117,7 @@ class SaveTaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Task
-        fields = (
+        fields = [
             "slug",
             "name",
             "description",
@@ -127,7 +127,7 @@ class SaveTaskSerializer(serializers.ModelSerializer):
             "is_archived",
             "lead_time",
             "is_multiple_instance",
-        )
+        ]
 
 
 class SaveSimpleTaskSerializer(SaveTaskSerializer):
@@ -158,7 +158,7 @@ class SaveCompleteTaskFormTaskSerializer(SaveTaskSerializer):
         return super().validate(data)
 
     class Meta(SaveTaskSerializer.Meta):
-        fields = SaveTaskSerializer.Meta.fields + ("form",)
+        fields = SaveTaskSerializer.Meta.fields + ["form"]
 
 
 class CaseSerializer(SendEventSerializerMixin, serializers.ModelSerializer):
@@ -194,7 +194,7 @@ class CaseSerializer(SendEventSerializerMixin, serializers.ModelSerializer):
 
     class Meta:
         model = models.Case
-        fields = ("workflow", "meta", "parent_work_item", "form")
+        fields = ["workflow", "meta", "parent_work_item", "form"]
 
 
 class SaveCaseSerializer(CaseSerializer):
@@ -209,7 +209,7 @@ class SaveCaseSerializer(CaseSerializer):
         return instance
 
     class Meta(CaseSerializer.Meta):
-        fields = ("id", "workflow", "meta", "parent_work_item", "form")
+        fields = ["id", "workflow", "meta", "parent_work_item", "form"]
 
 
 class CancelCaseSerializer(SendEventSerializerMixin, serializers.ModelSerializer):
@@ -217,7 +217,7 @@ class CancelCaseSerializer(SendEventSerializerMixin, serializers.ModelSerializer
 
     class Meta:
         model = models.Case
-        fields = ("id",)
+        fields = ["id"]
 
     def validate(self, data):
         try:
@@ -268,7 +268,7 @@ class CompleteWorkItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.WorkItem
-        fields = ("id",)
+        fields = ["id"]
 
 
 class SkipWorkItemSerializer(serializers.ModelSerializer):
@@ -294,7 +294,7 @@ class SkipWorkItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.WorkItem
-        fields = ("id",)
+        fields = ["id"]
 
 
 class SaveWorkItemSerializer(SendEventSerializerMixin, serializers.ModelSerializer):
@@ -319,14 +319,14 @@ class SaveWorkItemSerializer(SendEventSerializerMixin, serializers.ModelSerializ
 
     class Meta:
         model = models.WorkItem
-        fields = (
+        fields = [
             "work_item",
             "name",
             "description",
             "assigned_users",
             "deadline",
             "meta",
-        )
+        ]
 
 
 class CreateWorkItemSerializer(SendEventSerializerMixin, serializers.ModelSerializer):
@@ -392,7 +392,7 @@ class CreateWorkItemSerializer(SendEventSerializerMixin, serializers.ModelSerial
 
     class Meta:
         model = models.WorkItem
-        fields = (
+        fields = [
             "case",
             "multiple_instance_task",
             "name",
@@ -402,4 +402,4 @@ class CreateWorkItemSerializer(SendEventSerializerMixin, serializers.ModelSerial
             "controlling_groups",
             "deadline",
             "meta",
-        )
+        ]

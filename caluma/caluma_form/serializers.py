@@ -22,7 +22,7 @@ class QuestionJexlField(serializers.JexlField):
 class SaveFormSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Form
-        fields = ("slug", "name", "description", "meta", "is_archived", "is_published")
+        fields = ["slug", "name", "description", "meta", "is_archived", "is_published"]
 
 
 class CopyFormSerializer(serializers.ModelSerializer):
@@ -52,7 +52,7 @@ class CopyFormSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Form
-        fields = ("slug", "name", "description", "source", "is_published")
+        fields = ["slug", "name", "description", "source", "is_published"]
 
 
 class AddFormQuestionSerializer(serializers.ModelSerializer):
@@ -81,7 +81,7 @@ class AddFormQuestionSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        fields = ("form", "question")
+        fields = ["form", "question"]
         model = models.Form
 
 
@@ -98,7 +98,7 @@ class RemoveFormQuestionSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        fields = ("form", "question")
+        fields = ["form", "question"]
         model = models.Form
 
 
@@ -131,7 +131,7 @@ class ReorderFormQuestionsSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        fields = ("form", "questions")
+        fields = ["form", "questions"]
         model = models.Form
 
 
@@ -172,7 +172,7 @@ class CopyQuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Question
-        fields = ("slug", "label", "source")
+        fields = ["slug", "label", "source"]
 
 
 class SaveQuestionSerializer(serializers.ModelSerializer):
@@ -185,7 +185,7 @@ class SaveQuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Question
-        fields = (
+        fields = [
             "slug",
             "label",
             "info_text",
@@ -193,7 +193,7 @@ class SaveQuestionSerializer(serializers.ModelSerializer):
             "is_hidden",
             "meta",
             "is_archived",
-        )
+        ]
 
 
 class SaveTextQuestionSerializer(SaveQuestionSerializer):
@@ -206,12 +206,12 @@ class SaveTextQuestionSerializer(SaveQuestionSerializer):
         return super().validate(data)
 
     class Meta(SaveQuestionSerializer.Meta):
-        fields = SaveQuestionSerializer.Meta.fields + (
+        fields = SaveQuestionSerializer.Meta.fields + [
             "min_length",
             "max_length",
             "placeholder",
             "format_validators",
-        )
+        ]
 
 
 class SaveTextareaQuestionSerializer(SaveQuestionSerializer):
@@ -224,12 +224,12 @@ class SaveTextareaQuestionSerializer(SaveQuestionSerializer):
         return super().validate(data)
 
     class Meta(SaveQuestionSerializer.Meta):
-        fields = SaveQuestionSerializer.Meta.fields + (
+        fields = SaveQuestionSerializer.Meta.fields + [
             "min_length",
             "max_length",
             "placeholder",
             "format_validators",
-        )
+        ]
 
 
 class SaveDateQuestionSerializer(SaveQuestionSerializer):
@@ -285,7 +285,7 @@ class SaveMultipleChoiceQuestionSerializer(
         return super().validate(data)
 
     class Meta(SaveQuestionSerializer.Meta):
-        fields = SaveQuestionSerializer.Meta.fields + ("options",)
+        fields = SaveQuestionSerializer.Meta.fields + ["options"]
 
 
 class SaveChoiceQuestionSerializer(SaveQuestionOptionsMixin, SaveQuestionSerializer):
@@ -298,7 +298,7 @@ class SaveChoiceQuestionSerializer(SaveQuestionOptionsMixin, SaveQuestionSeriali
         return super().validate(data)
 
     class Meta(SaveQuestionSerializer.Meta):
-        fields = SaveQuestionSerializer.Meta.fields + ("options",)
+        fields = SaveQuestionSerializer.Meta.fields + ["options"]
 
 
 class SaveDynamicChoiceQuestionSerializer(SaveQuestionSerializer):
@@ -309,7 +309,7 @@ class SaveDynamicChoiceQuestionSerializer(SaveQuestionSerializer):
         return super().validate(data)
 
     class Meta(SaveQuestionSerializer.Meta):
-        fields = SaveQuestionSerializer.Meta.fields + ("data_source",)
+        fields = SaveQuestionSerializer.Meta.fields + ["data_source"]
 
 
 class SaveDynamicMultipleChoiceQuestionSerializer(SaveQuestionSerializer):
@@ -320,7 +320,7 @@ class SaveDynamicMultipleChoiceQuestionSerializer(SaveQuestionSerializer):
         return super().validate(data)
 
     class Meta(SaveQuestionSerializer.Meta):
-        fields = SaveQuestionSerializer.Meta.fields + ("data_source",)
+        fields = SaveQuestionSerializer.Meta.fields + ["data_source"]
 
 
 class SaveFloatQuestionSerializer(SaveQuestionSerializer):
@@ -346,11 +346,11 @@ class SaveFloatQuestionSerializer(SaveQuestionSerializer):
         return super().validate(data)
 
     class Meta(SaveQuestionSerializer.Meta):
-        fields = SaveQuestionSerializer.Meta.fields + (
+        fields = SaveQuestionSerializer.Meta.fields + [
             "min_value",
             "max_value",
             "placeholder",
-        )
+        ]
 
 
 class SaveIntegerQuestionSerializer(SaveQuestionSerializer):
@@ -376,11 +376,11 @@ class SaveIntegerQuestionSerializer(SaveQuestionSerializer):
         return super().validate(data)
 
     class Meta(SaveQuestionSerializer.Meta):
-        fields = SaveQuestionSerializer.Meta.fields + (
+        fields = SaveQuestionSerializer.Meta.fields + [
             "min_value",
             "max_value",
             "placeholder",
-        )
+        ]
 
 
 class SaveTableQuestionSerializer(SaveQuestionSerializer):
@@ -395,7 +395,7 @@ class SaveTableQuestionSerializer(SaveQuestionSerializer):
         return super().validate(data)
 
     class Meta(SaveQuestionSerializer.Meta):
-        fields = SaveQuestionSerializer.Meta.fields + ("row_form",)
+        fields = SaveQuestionSerializer.Meta.fields + ["row_form"]
 
 
 class SaveFormQuestionSerializer(SaveQuestionSerializer):
@@ -408,7 +408,7 @@ class SaveFormQuestionSerializer(SaveQuestionSerializer):
         return super().validate(data)
 
     class Meta(SaveQuestionSerializer.Meta):
-        fields = SaveQuestionSerializer.Meta.fields + ("sub_form",)
+        fields = SaveQuestionSerializer.Meta.fields + ["sub_form"]
 
 
 class SaveFileQuestionSerializer(SaveQuestionSerializer):
@@ -428,7 +428,7 @@ class SaveStaticQuestionSerializer(SaveQuestionSerializer):
         return super().validate(data)
 
     class Meta(SaveQuestionSerializer.Meta):
-        fields = (
+        fields = [
             "label",
             "slug",
             "info_text",
@@ -436,12 +436,12 @@ class SaveStaticQuestionSerializer(SaveQuestionSerializer):
             "meta",
             "is_archived",
             "static_content",
-        )
+        ]
 
 
 class SaveOptionSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ("slug", "label", "is_archived", "meta")
+        fields = ["slug", "label", "is_archived", "meta"]
         model = models.Option
 
 
@@ -456,14 +456,14 @@ class CopyOptionSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     class Meta:
-        fields = ("slug", "label", "source")
+        fields = ["slug", "label", "source"]
         model = models.Option
 
 
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Document
-        fields = ("id", "form", "meta")
+        fields = ["id", "form", "meta"]
 
 
 class SaveAnswerSerializer(serializers.ModelSerializer):
@@ -475,7 +475,7 @@ class SaveAnswerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Answer
-        fields = ("question", "document", "meta", "value")
+        fields = ["question", "document", "meta", "value"]
 
 
 class SaveDocumentStringAnswerSerializer(SaveAnswerSerializer):
@@ -607,7 +607,7 @@ class SaveDocumentFileAnswerSerializer(SaveAnswerSerializer):
         return super().update(instance, validated_data)
 
     class Meta(SaveAnswerSerializer.Meta):
-        fields = SaveAnswerSerializer.Meta.fields + ("value_id",)
+        fields = SaveAnswerSerializer.Meta.fields + ["value_id"]
 
 
 class RemoveAnswerSerializer(serializers.ModelSerializer):
@@ -618,7 +618,7 @@ class RemoveAnswerSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        fields = ("answer",)
+        fields = ["answer"]
         model = models.Answer
 
 
@@ -639,7 +639,7 @@ class RemoveDocumentSerializer(serializers.ModelSerializer):
         return instance
 
     class Meta:
-        fields = ("document",)
+        fields = ["document"]
         model = models.Document
 
 
@@ -654,4 +654,4 @@ class CopyDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Document
-        fields = ("source",)
+        fields = ["source"]
