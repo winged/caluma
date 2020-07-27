@@ -64,7 +64,7 @@ class GroupJexl(JEXL):
         self.context = Context(context_data)
         self.add_transform(
             "groups",
-            lambda names: list(
+            lambda names: sorted(
                 set(
                     chain(
                         *[
