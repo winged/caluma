@@ -117,14 +117,15 @@ def test_sql_repeatability(
         "example_pivot_table",
     ],
 )
+@pytest.mark.parametrize("use_function", [True, False])
 @pytest.mark.freeze_time("2021-10-10")
-def test_unusual_aliases(db, table, analytics_cases, alias, request):
+def test_unusual_aliases(db, table, use_function, analytics_cases, alias, request):
 
     table_obj = request.getfixturevalue(table)
 
     some_field = table_obj.fields.get(alias="quarter")
     some_field.alias = alias
-    some_field.function = "sum"
+    some_field.function = "sum" if use_function else "value"
     some_field.save()
 
     table = (
