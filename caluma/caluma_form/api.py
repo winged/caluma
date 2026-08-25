@@ -1,9 +1,23 @@
 from typing import Any, Optional
 
+from django.db import transaction
+
 from caluma.caluma_form import domain_logic, models
 from caluma.caluma_user.models import BaseUser
 
 
+def _lock_family(document):
+    """Lock the given document's family for the current transaction.
+
+    Any update in the form structure must lock the document family, so
+    no other request in parallel can update the same document. Even if
+    only an answer is updated, it could trigger multiple calculated field
+    updates, which could then cause race conditions.
+    """
+    _ = models.Document.objects.filter(pk=document.family_id).select_for_update().get()
+
+
+@transaction.atomic
 def save_answer(
     question: models.Question,
     document: Optional[models.Document] = None,
@@ -22,6 +36,8 @@ def save_answer(
     data = {"question": question, "document": document, "value": value}
     data.update(kwargs)
 
+    if document:
+        _lock_family(document)
     answer = models.Answer.objects.filter(question=question, document=document).first()
     answer = domain_logic.SaveAnswerLogic.get_new_answer(
         data, user, answer, context=context
@@ -52,6 +68,7 @@ def save_default_answer(
     return answer
 
 
+@transaction.atomic
 def save_document(
     form: models.Form,
     meta: Optional[dict] = None,
@@ -67,6 +84,7 @@ def save_document(
         return domain_logic.SaveDocumentLogic.create(
             {"form": form, "meta": meta}, user=user
         )
+    _lock_family(document)
 
     domain_logic.SaveDocumentLogic.update(
         document, {"form": form, "meta": meta}, user=user

@@ -15,7 +15,7 @@ from rest_framework.serializers import (
 from caluma.caluma_form.exceptions import CustomFormatValidationError
 
 from ..caluma_core import serializers
-from . import domain_logic, models, validators
+from . import api, domain_logic, models, validators
 from .jexl import QuestionJexl
 
 
@@ -583,13 +583,14 @@ class SaveAnswerSerializer(serializers.ModelSerializer):
     )
 
     def validate(self, data):
+        self._data_source_context = data.pop("data_source_context", None)
         try:
             data = domain_logic.SaveAnswerLogic.validate_for_save(
                 data,
                 self.context["request"].user,
                 self.instance,
                 True,
-                data.pop("data_source_context", None),
+                self._data_source_context,
             )
         except CustomFormatValidationError as exc:
             detail = exc.detail[0]
@@ -597,15 +598,19 @@ class SaveAnswerSerializer(serializers.ModelSerializer):
 
         return super().validate(data)
 
-    @transaction.atomic
     def create(self, validated_data):
-        return domain_logic.SaveAnswerLogic.create(
-            validated_data, user=self.context["request"].user
+        return api.save_answer(
+            **validated_data,
+            user=self.context["request"].user,
+            context=self._data_source_context,
         )
 
-    @transaction.atomic
     def update(self, instance, validated_data):
-        return domain_logic.SaveAnswerLogic.update(instance, validated_data)
+        return api.save_answer(
+            **validated_data,
+            user=self.context["request"].user,
+            context=self._data_source_context,
+        )
 
     class Meta:
         model = models.Answer

@@ -810,12 +810,12 @@ def test_validate_integer_0(
     "option_jexl, expect_queries, expect_jexl_evaluations",
     [
         # pre-recognized "visible" jexl, no JEXL and few queries
-        ("", 9, 0),
+        ("", 12, 0),
         # pre-recognized "visible" jexl, no JEXL and few queries
-        ("false", 9, 0),
+        ("false", 12, 0),
         # not pre-recognized - needs to be evaluated in full doc context
         # therefore more queries needed, and JEXL expressions are evaluated
-        ("!true", 16, 5),
+        ("!true", 19, 5),
     ],
 )
 def test_validate_options_without_jexl(
