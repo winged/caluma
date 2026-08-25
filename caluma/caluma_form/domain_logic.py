@@ -165,7 +165,7 @@ class SaveAnswerLogic:
         return answer
 
     @staticmethod
-    def recalculate_dependents(answer, update_info):
+    def recalculate_dependents(answer):
         """Update the dependent calc answers when this given answer has changed."""
         is_table = answer.question.type == models.Question.TYPE_TABLE
         if not is_table and not answer.question.calc_dependents:
@@ -202,11 +202,10 @@ class SaveAnswerLogic:
         if validated_data["question"].type == models.Question.TYPE_FILES:
             cls.update_answer_files(answer, files)
 
-        update_info = None
         if answer.question.type == models.Question.TYPE_TABLE:
-            update_info = answer.create_answer_documents(documents)
+            answer.create_answer_documents(documents)
 
-        cls.recalculate_dependents(answer, update_info)
+        cls.recalculate_dependents(answer)
 
         return answer
 
@@ -222,11 +221,10 @@ class SaveAnswerLogic:
 
         BaseLogic.update(answer, validated_data, user)
 
-        update_info = None
         if answer.question.type == models.Question.TYPE_TABLE:
-            update_info = answer.create_answer_documents(documents)
+            answer.create_answer_documents(documents)
 
-        cls.recalculate_dependents(answer, update_info)
+        cls.recalculate_dependents(answer)
 
         return answer
 
