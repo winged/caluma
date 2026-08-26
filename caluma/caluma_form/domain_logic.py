@@ -80,8 +80,6 @@ class SaveAnswerLogic:
         each entry has a "name" (the file name), and optionally an "id"
         for the case when the given file already exists.
         """
-        if not files:
-            files = []
 
         updated = []
 
@@ -196,11 +194,7 @@ class SaveAnswerLogic:
         if validated_data["question"].type == models.Question.TYPE_TABLE:
             documents = validated_data.pop("documents")
 
-        files = validated_data.pop("files", None)
         answer = BaseLogic.create(models.Answer, validated_data, user)
-
-        if validated_data["question"].type == models.Question.TYPE_FILES:
-            cls.update_answer_files(answer, files)
 
         if answer.question.type == models.Question.TYPE_TABLE:
             answer.create_answer_documents(documents)
@@ -215,9 +209,6 @@ class SaveAnswerLogic:
         if answer.question.type == models.Question.TYPE_TABLE:
             documents = validated_data.pop("documents")
             answer.unlink_unused_rows(docs_to_keep=documents)
-
-        if answer.question.type == models.Question.TYPE_FILES:
-            cls.update_answer_files(answer, validated_data.pop("files", None))
 
         BaseLogic.update(answer, validated_data, user)
 
