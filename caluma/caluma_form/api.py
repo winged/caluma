@@ -92,6 +92,28 @@ def save_document(
     return document
 
 
+@transaction.atomic
+def remove_answer(
+    answer: models.Answer, user: Optional[BaseUser] = None
+) -> models.Answer:
+    """Remove an answer from a document."""
+
+    _lock_family(answer.document)
+    domain_logic.RemoveAnswerLogic.delete(answer, user)
+    return answer
+
+
+@transaction.atomic
+def remove_document(
+    document: models.Document, user: Optional[BaseUser] = None
+) -> models.Document:
+    """Remove a document."""
+
+    _lock_family(document)
+    domain_logic.RemoveDocumentLogic.delete(document, user=user)
+    return document
+
+
 def copy_form(
     source: models.Form,
     slug: str,

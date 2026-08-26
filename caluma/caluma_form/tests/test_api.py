@@ -34,6 +34,7 @@ def test_save_answer_with_context(db, mocker, question_factory, document):
 @pytest.mark.parametrize("question__type", [models.Question.TYPE_TEXT])
 def test_save_answer_via_graphql_locks_family(db, mocker, answer, schema_executor):
     lock_family = mocker.spy(api, "_lock_family")
+    validate_for_save = mocker.spy(domain_logic.SaveAnswerLogic, "validate_for_save")
     query = """
         mutation saveDocumentStringAnswer($input: SaveDocumentStringAnswerInput!) {
           saveDocumentStringAnswer(input: $input) {
@@ -58,6 +59,74 @@ def test_save_answer_via_graphql_locks_family(db, mocker, answer, schema_executo
     assert not result.errors
     assert result.data["saveDocumentStringAnswer"]["answer"]["value"] == "updated"
     lock_family.assert_called_once_with(answer.document)
+    validate_for_save.assert_called_once()
+
+
+def test_save_document_via_graphql_locks_family(db, mocker, document, schema_executor):
+    lock_family = mocker.spy(api, "_lock_family")
+    document.meta = {"existing": "value"}
+    document.save()
+    query = """
+        mutation saveDocument($input: SaveDocumentInput!) {
+          saveDocument(input: $input) {
+            document {
+              id
+            }
+          }
+        }
+    """
+    variables = {
+        "input": {
+            "id": str(document.pk),
+            "form": document.form.pk,
+        }
+    }
+
+    result = schema_executor(query, variable_values=variables)
+
+    assert not result.errors
+    document.refresh_from_db()
+    assert document.meta == {"existing": "value"}
+    lock_family.assert_called_once_with(document)
+
+
+def test_remove_answer_via_graphql_locks_family(db, mocker, answer, schema_executor):
+    lock_family = mocker.spy(api, "_lock_family")
+    query = """
+        mutation removeAnswer($input: RemoveAnswerInput!) {
+          removeAnswer(input: $input) {
+            clientMutationId
+          }
+        }
+    """
+
+    result = schema_executor(
+        query, variable_values={"input": {"answer": str(answer.pk)}}
+    )
+
+    assert not result.errors
+    lock_family.assert_called_once_with(answer.document)
+
+
+def test_remove_document_via_graphql_locks_family(
+    db, mocker, document, schema_executor
+):
+    lock_family = mocker.spy(api, "_lock_family")
+    query = """
+        mutation removeDocument($input: RemoveDocumentInput!) {
+          removeDocument(input: $input) {
+            clientMutationId
+          }
+        }
+    """
+
+    result = schema_executor(
+        query, variable_values={"input": {"document": str(document.pk)}}
+    )
+
+    assert not result.errors
+    assert lock_family.call_count == 1
+    assert lock_family.call_args.args[0].family_id == document.family_id
 
 
 def test_save_answer_serializes_document_family_updates(

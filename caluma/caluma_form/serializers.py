@@ -560,6 +560,16 @@ class DocumentSerializer(serializers.ModelSerializer):
             validated_data, user=self.context["request"].user
         )
 
+    def update(self, document, validated_data):
+        validated_data.pop("id", None)
+        validated_data.setdefault("form", document.form)
+        validated_data.setdefault("meta", document.meta)
+        return api.save_document(
+            **validated_data,
+            document=document,
+            user=self.context["request"].user,
+        )
+
     class Meta:
         model = models.Document
         fields = [
@@ -584,33 +594,24 @@ class SaveAnswerSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         self._data_source_context = data.pop("data_source_context", None)
+        return super().validate(data)
+
+    def _save(self, validated_data):
         try:
-            data = domain_logic.SaveAnswerLogic.validate_for_save(
-                data,
-                self.context["request"].user,
-                self.instance,
-                True,
-                self._data_source_context,
+            return api.save_answer(
+                **validated_data,
+                user=self.context["request"].user,
+                context=self._data_source_context,
             )
         except CustomFormatValidationError as exc:
             detail = exc.detail[0]
             raise GraphQLError(str(detail), extensions={"code": detail.code})
 
-        return super().validate(data)
-
     def create(self, validated_data):
-        return api.save_answer(
-            **validated_data,
-            user=self.context["request"].user,
-            context=self._data_source_context,
-        )
+        return self._save(validated_data)
 
     def update(self, instance, validated_data):
-        return api.save_answer(
-            **validated_data,
-            user=self.context["request"].user,
-            context=self._data_source_context,
-        )
+        return self._save(validated_data)
 
     class Meta:
         model = models.Answer
@@ -688,10 +689,8 @@ class RemoveAnswerSerializer(serializers.ModelSerializer):
         queryset=models.Answer.objects.filter(document__isnull=False)
     )
 
-    @transaction.atomic
     def update(self, instance, validated_data):
-        domain_logic.RemoveAnswerLogic.delete(instance, self.context["request"].user)
-        return instance
+        return api.remove_answer(instance, self.context["request"].user)
 
     class Meta:
         fields = [
@@ -785,12 +784,8 @@ class RemoveDefaultAnswerSerializer(serializers.ModelSerializer):
 class RemoveDocumentSerializer(serializers.ModelSerializer):
     document = serializers.GlobalIDField(source="id")
 
-    @transaction.atomic
     def update(self, instance, validated_data):
-        domain_logic.RemoveDocumentLogic.delete(
-            instance, user=self.context["request"].user
-        )
-        return instance
+        return api.remove_document(instance, user=self.context["request"].user)
 
     class Meta:
         fields = ["document"]
